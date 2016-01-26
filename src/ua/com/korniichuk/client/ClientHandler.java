@@ -1,14 +1,10 @@
 package ua.com.korniichuk.client;
 
-import ua.com.korniichuk.util.MessageCreator;
 import ua.com.korniichuk.util.MessagePublisher;
 
 import java.io.*;
 import java.net.Socket;
 
-/**
- * Created by DSK4 on 22.12.2015.
- */
 public class ClientHandler implements Runnable {
     private BufferedReader in;
     private BufferedWriter out;
@@ -23,12 +19,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            out.write("Hello! Enter your nick pls :");
+            out.write("Hello! Enter, pls, your nick:");
             out.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
             setNick(in.readLine());
         } catch (IOException e) {
             e.printStackTrace();
@@ -41,19 +33,15 @@ public class ClientHandler implements Runnable {
         }
         System.out.println(getNick() + " online.");
         ClientRepository.getInstance().register(this);
-       // System.out.println(ClientRepository.getInstance().size());
 
-        MessageCreator messageCreator = new MessageCreator();
-
-      /*  while (true){
-            try {
-                out.write(messageCreator.createMessage(getNick(),in.readLine()));
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+     /*   MessageCreator messageCreator = new MessageCreator();
+        try {
+            String newMessage = messageCreator.createMessage(getNick(), in.readLine());
+            System.out.println(newMessage);
+            messagePublisher.publish(newMessage);
+        } catch (IOException e) {
+            e.printStackTrace();
         }*/
-
     }
 
     public void setIn(BufferedReader in) {

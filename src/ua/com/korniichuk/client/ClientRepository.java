@@ -3,9 +3,6 @@ package ua.com.korniichuk.client;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by DSK4 on 22.12.2015.
- */
 public class ClientRepository {
 
     List<ClientHandler> handlers = new ArrayList<ClientHandler>();
