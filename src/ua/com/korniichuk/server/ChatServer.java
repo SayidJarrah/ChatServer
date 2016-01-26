@@ -18,10 +18,12 @@ public class ChatServer {
                 clientHandler.configure(socket);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
 
+
+        }
     }
 }

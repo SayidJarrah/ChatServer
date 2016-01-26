@@ -1,5 +1,6 @@
 package ua.com.korniichuk.client;
 
+import ua.com.korniichuk.util.MessageCreator;
 import ua.com.korniichuk.util.MessagePublisher;
 
 import java.io.*;
@@ -11,37 +12,52 @@ public class ClientHandler implements Runnable {
     private String nick;
 
     public void configure(Socket socket) throws IOException {
+
         setIn(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         setOut(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
 
     }
 
+    /*public void currentUsersStatus(){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                int currentSize = ClientRepository.getInstance().size();
+                try {
+                    new MessagePublisher().publish("Online "+ currentSize + "users");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        },0*20*1000);
+    }*/
+
     @Override
     public void run() {
+        ClientRepository.getInstance().register(this);
+        MessagePublisher messagePublisher = new MessagePublisher();
         try {
             out.write("Hello! Enter, pls, your nick:");
             out.flush();
             setNick(in.readLine());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        MessagePublisher messagePublisher = new MessagePublisher();
-        try {
             messagePublisher.publish(getNick() + " online.");
         } catch (IOException e) {
             e.printStackTrace();
         }
         System.out.println(getNick() + " online.");
-        ClientRepository.getInstance().register(this);
+        MessageCreator messageCreator = new MessageCreator();
+        while (true) {
+            try {
+                String newMessage = messageCreator.createMessage(getNick(), in.readLine());
+                System.out.println(newMessage);
+                messagePublisher.publish(newMessage);
 
-     /*   MessageCreator messageCreator = new MessageCreator();
-        try {
-            String newMessage = messageCreator.createMessage(getNick(), in.readLine());
-            System.out.println(newMessage);
-            messagePublisher.publish(newMessage);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+        }
     }
 
     public void setIn(BufferedReader in) {
