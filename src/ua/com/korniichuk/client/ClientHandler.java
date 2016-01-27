@@ -18,26 +18,13 @@ public class ClientHandler implements Runnable {
 
     }
 
-    /*public void currentUsersStatus(){
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int currentSize = ClientRepository.getInstance().size();
-                try {
-                    new MessagePublisher().publish("Online "+ currentSize + "users");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        },0*20*1000);
-    }*/
 
     @Override
     public void run() {
         ClientRepository.getInstance().register(this);
         MessagePublisher messagePublisher = new MessagePublisher();
         try {
+            out.write(ClientRepository.getInstance().size() - 1 + " users online" + System.getProperty("line.separator"));
             out.write("Hello! Enter, pls, your nick:");
             out.flush();
             setNick(in.readLine());
@@ -49,13 +36,19 @@ public class ClientHandler implements Runnable {
         MessageCreator messageCreator = new MessageCreator();
         while (true) {
             try {
-                String newMessage = messageCreator.createMessage(getNick(), in.readLine());
+                String input = in.readLine();
+                if (input == null) {
+                    messagePublisher.publish(getNick() + " left chat room");
+                    ClientRepository.getInstance().unregister(this);
+                    messagePublisher.publish(ClientRepository.getInstance().size()+ " users online" + System.getProperty("line.separator"));
+                    break;
+                }
+                String newMessage = messageCreator.createMessage(getNick(), input);
                 System.out.println(newMessage);
                 messagePublisher.publish(newMessage);
 
             } catch (IOException e) {
                 e.printStackTrace();
-
             }
         }
     }
