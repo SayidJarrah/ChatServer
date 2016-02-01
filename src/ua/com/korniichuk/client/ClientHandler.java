@@ -15,32 +15,35 @@ public class ClientHandler implements Runnable {
 
         setIn(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         setOut(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
-
     }
-
 
     @Override
     public void run() {
         ClientRepository.getInstance().register(this);
         MessagePublisher messagePublisher = new MessagePublisher();
         try {
-            out.write(ClientRepository.getInstance().size() - 1 + " users online" + System.getProperty("line.separator"));
-            out.write("Hello! Enter, pls, your nick:");
+            out.write("Hello" + System.getProperty("line.separator") +
+                    (ClientRepository.getInstance().size() - 1) + " users online" +
+                    System.getProperty("line.separator") +
+                    "Enter, pls, your nick:");
             out.flush();
-            setNick(in.readLine());
-            messagePublisher.publish(getNick() + " online.");
+
+            String nickNameInput = in.readLine();
+            setNick(nickNameInput.substring(20));   //need for removing metadata from inputStream
+            if (!getNick().equals("")) {
+                System.out.println(getNick() + " online.");
+                messagePublisher.publish(getNick() + " online.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(getNick() + " online.");
         MessageCreator messageCreator = new MessageCreator();
         while (true) {
             try {
                 String input = in.readLine();
                 if (input == null) {
-                    messagePublisher.publish(getNick() + " left chat room");
                     ClientRepository.getInstance().unregister(this);
-                    messagePublisher.publish(ClientRepository.getInstance().size()+ " users online" + System.getProperty("line.separator"));
+                    messagePublisher.publish(getNick() + " left chat room");
                     break;
                 }
                 String newMessage = messageCreator.createMessage(getNick(), input);
