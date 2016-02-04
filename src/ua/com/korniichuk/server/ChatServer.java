@@ -15,7 +15,7 @@ public class ChatServer {
         while (true) {
             try (ServerSocket serverSocket = new ServerSocket(PORT)) {
                 Socket socket = serverSocket.accept();
-                ClientHandler clientHandler = new ClientHandler();
+                ClientHandler clientHandler = new ClientHandler(socket);
                 clientHandler.configure(socket);
                 Thread serverMessageThread = new Thread(new ServerMessageCreator());
                 serverMessageThread.isDaemon();

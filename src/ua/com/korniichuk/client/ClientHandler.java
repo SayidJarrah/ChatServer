@@ -5,16 +5,23 @@ import ua.com.korniichuk.util.MessagePublisher;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ClientHandler implements Runnable {
     private BufferedReader in;
     private BufferedWriter out;
     private String nick;
+    private Socket socket;
+
+    public ClientHandler(Socket socket) {
+        this.socket = socket;
+    }
 
     public void configure(Socket socket) throws IOException {
 
         setIn(new BufferedReader(new InputStreamReader(socket.getInputStream())));
         setOut(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())));
+        this.socket = socket;
     }
 
     @Override
@@ -25,13 +32,13 @@ public class ClientHandler implements Runnable {
             out.write("Hello" + System.getProperty("line.separator") +
                     (ClientRepository.getInstance().size() - 1) + " users online" +
                     System.getProperty("line.separator") +
-                    "Enter, pls, your nick:");
+                    "Enter, pls, your nick:" + System.getProperty("line.separator"));
             out.flush();
 
             String nickNameInput = in.readLine();
-            setNick(nickNameInput.substring(20));   //need for removing metadata from inputStream
+            setNick(nickNameInput/*.substring(20)*/);   //need for removing metadata from inputStream
             if (!getNick().equals("")) {
-                System.out.println(getNick() + " online.");
+                System.out.println(getNick() + " online.");   //TODO: replace all sout to logger;
                 messagePublisher.publish(getNick() + " online.");
             }
         } catch (IOException e) {
@@ -40,10 +47,19 @@ public class ClientHandler implements Runnable {
         MessageCreator messageCreator = new MessageCreator();
         while (true) {
             try {
-                String input = in.readLine();
+                String input = null;
+
+                try {
+                    input = in.readLine();
+                } catch (SocketException e) {
+                    ClientRepository.getInstance().unregister(this);
+                    messagePublisher.publish(getNick() + " left chat room");
+                    break;
+                }
                 if (input == null) {
                     ClientRepository.getInstance().unregister(this);
                     messagePublisher.publish(getNick() + " left chat room");
+                    System.out.println(getNick() + " left chat room");
                     break;
                 }
                 String newMessage = messageCreator.createMessage(getNick(), input);
@@ -55,6 +71,7 @@ public class ClientHandler implements Runnable {
             }
         }
     }
+
 
     public void setIn(BufferedReader in) {
         this.in = in;
