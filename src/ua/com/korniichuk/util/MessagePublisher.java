@@ -20,7 +20,17 @@ public class MessagePublisher {
 
     }
 
-    public void publisServiceMessage() throws IOException {
+    public void publish(String message) throws IOException {
+
+        List<ClientHandler> listeners = ClientRepository.getInstance().getHandlers();
+        for (ClientHandler clientHandler : listeners) {
+            clientHandler.getOut().writeObject(message);
+            clientHandler.getOut().flush();
+        }
+
+    }
+
+    public void publishServiceMessage() throws IOException {
         //******
         OnlineUsers onlineUsers = new OnlineUsers();
         ArrayList usersList = new ArrayList();

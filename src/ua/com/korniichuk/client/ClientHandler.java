@@ -2,7 +2,9 @@ package ua.com.korniichuk.client;
 
 import ua.com.korniichuk.util.MessagePublisher;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
@@ -21,7 +23,7 @@ public class ClientHandler implements Runnable {
     public void run() {
         MessagePublisher messagePublisher = new MessagePublisher();
         try {
-            out.writeUTF("Welcome in myChat 1.0" + System.getProperty("line.separator") +
+            out.writeObject("Welcome in myChat 1.0" + System.getProperty("line.separator") +
                     "Now " + ClientRepository.getInstance().size() + " users online" +
                     System.getProperty("line.separator") +
                     "Enter, pls, your nick:" + System.getProperty("line.separator"));
@@ -30,13 +32,23 @@ public class ClientHandler implements Runnable {
             setNick(nickNameInput);   //need for removing metadata from inputStream
             System.out.println(getNick() + " online.");
             ClientRepository.getInstance().register(this);
+            messagePublisher.publish(getNick() + " online.");
 
             while (true) {
-                Message newMessage = (Message) in.readObject();
-                System.out.println(newMessage);
-                messagePublisher.publisServiceMessage();
-                messagePublisher.publish(newMessage);
+                Message newMessage;
+                try {
+                    newMessage = (Message) in.readObject();
+                    messagePublisher.publishServiceMessage();
+                    messagePublisher.publish(newMessage);
+                } catch (IOException e) {
+                    ClientRepository.getInstance().unregister(this);
+                    messagePublisher.publish(this.getNick() + " left chat");
+                    break;
+                }
+             //   System.out.println(newMessage);
+
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
