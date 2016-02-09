@@ -21,8 +21,8 @@ public class ClientHandler implements Runnable {
     public void run() {
         MessagePublisher messagePublisher = new MessagePublisher();
         try {
-            out.writeUTF("Hello" + System.getProperty("line.separator") +
-                    ClientRepository.getInstance().size() + " users online" +
+            out.writeUTF("Welcome in myChat 1.0" + System.getProperty("line.separator") +
+                    "Now " + ClientRepository.getInstance().size() + " users online" +
                     System.getProperty("line.separator") +
                     "Enter, pls, your nick:" + System.getProperty("line.separator"));
             out.flush();
