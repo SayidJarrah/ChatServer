@@ -28,8 +28,11 @@ public class ClientHandler implements Runnable {
                     System.getProperty("line.separator") +
                     "Enter, pls, your nick:" + System.getProperty("line.separator"));
             out.flush();
-            String nickNameInput = in.readUTF();
-            setNick(nickNameInput);   //need for removing metadata from inputStream
+            Object obj = in.readObject();
+            if (obj instanceof String) {
+                setNick((String) obj);
+            }
+               //need for removing metadata from inputStream
             System.out.println(getNick() + " online.");
             ClientRepository.getInstance().register(this);
             messagePublisher.publish(getNick() + " online.");
@@ -38,7 +41,7 @@ public class ClientHandler implements Runnable {
                 Message newMessage;
                 try {
                     newMessage = (Message) in.readObject();
-                    messagePublisher.publishServiceMessage();
+                    messagePublisher.publishServiceMessage(); //TODO: move on the beginning
                     messagePublisher.publish(newMessage);
                 } catch (IOException e) {
                     ClientRepository.getInstance().unregister(this);
