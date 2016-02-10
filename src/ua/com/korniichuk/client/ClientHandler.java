@@ -36,6 +36,7 @@ public class ClientHandler implements Runnable {
             System.out.println(getNick() + " online.");
             ClientRepository.getInstance().register(this);
             messagePublisher.publish(getNick() + " online.");
+            messagePublisher.publishServiceMessage();
 
             while (true) {
                 Message newMessage;
@@ -46,6 +47,7 @@ public class ClientHandler implements Runnable {
                 } catch (IOException e) {
                     ClientRepository.getInstance().unregister(this);
                     messagePublisher.publish(this.getNick() + " left chat");
+                    messagePublisher.publishServiceMessage();
                     break;
                 }
              //   System.out.println(newMessage);
