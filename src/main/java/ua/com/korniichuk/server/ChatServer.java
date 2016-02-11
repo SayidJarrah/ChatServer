@@ -20,8 +20,6 @@ public class ChatServer {
                 ClientHandler clientHandler = new ClientHandler(socket);
                 Thread clientHandlerThread = new Thread(clientHandler);
                 clientHandlerThread.start();
-
-
             } catch (IOException e) {
                 LOG.error(e);
                 throw new RuntimeException(e);

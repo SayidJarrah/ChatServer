@@ -60,7 +60,9 @@ public class ClientHandler implements Runnable {
             if (usersCache.getMap().containsKey(userAddress)) {
                 nick = usersCache.getMap().get(userAddress);
                 ClientRepository.getInstance().register(this);
-                out.writeObject(nick+", " + CommonMessages.WELCOME);
+                Account account = new Account();
+                account.setExistingNickName(nick);
+                out.writeObject(account);
             } else {
                 out.writeObject(CommonMessages.WELCOME);
                 out.flush();
