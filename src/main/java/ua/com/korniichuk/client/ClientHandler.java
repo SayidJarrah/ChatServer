@@ -3,6 +3,7 @@ package ua.com.korniichuk.client;
 import org.apache.log4j.Logger;
 import ua.com.korniichuk.util.CommonMessages;
 import ua.com.korniichuk.util.MessagePublisher;
+import ua.com.korniichuk.util.UsersCache;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -24,24 +25,37 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         MessagePublisher messagePublisher = new MessagePublisher();
+        UsersCache usersCache = new UsersCache();
         try {
-            out.writeObject(CommonMessages.WELCOME);
-            out.flush();
-            Object obj = in.readObject();
-            if (obj instanceof String) {
-                nick = (String) obj;
+            String userAddress = (String) in.readObject();
+            System.out.println(userAddress);  //read ip-address
+
+            if (usersCache.getMap().containsKey(userAddress)) {
+                nick = usersCache.getMap().get(userAddress);
+                System.out.println(nick);
+                ClientRepository.getInstance().register(this);
+            } else {
+               /* out.writeObject(CommonMessages.WELCOME);
+                out.flush();*/
+                Object obj = in.readObject();
+                if (obj instanceof String) {
+                    nick = (String) obj;
+                }
+                ClientRepository.getInstance().register(this);
+                usersCache.appendUsersName(userAddress,nick);
+                LOG.info("User log in");
+                usersCache.appendUsersName(userAddress, nick);
             }
-            ClientRepository.getInstance().register(this);
-            LOG.info("User log in");
             messagePublisher.publish(nick + CommonMessages.ONLINE);
             messagePublisher.publishServiceMessage();
 
             while (true) {
-                Message newMessage;
                 try {
-                    newMessage = (Message) in.readObject();
-                    messagePublisher.publishServiceMessage();
-                    messagePublisher.publish(newMessage);
+                    Object objectInput = in.readObject();
+                    if (objectInput instanceof Message) {
+                        messagePublisher.publishServiceMessage();
+                        messagePublisher.publish((Message) objectInput);
+                    }
                 } catch (IOException e) {
                     ClientRepository.getInstance().unregister(this);
                     LOG.info("User log out");
