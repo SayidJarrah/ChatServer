@@ -31,22 +31,16 @@ public class MessagePublisher {
     }
 
     public void publishServiceMessage() throws IOException {
-        //******
-        OnlineUsers onlineUsers = new OnlineUsers();
-        ArrayList usersList = new ArrayList();
+        ArrayList<String> usersList = new ArrayList<>();
         List<ClientHandler> clientHandlers = ClientRepository.getInstance().getHandlers();
-
         for (ClientHandler user : clientHandlers) {
             usersList.add(user.getNick());
         }
-        onlineUsers.setUsers(usersList);
-
         List<ClientHandler> listeners = ClientRepository.getInstance().getHandlers();
         for (ClientHandler clientHandler : listeners) {
-            clientHandler.getOut().writeObject(onlineUsers);
+            clientHandler.getOut().writeObject(usersList);
             clientHandler.getOut().flush();
         }
-        //*****
     }
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ClientRepository {
 
-    List<ClientHandler> handlers = new ArrayList<ClientHandler>();
+    List<ClientHandler> handlers = new ArrayList<>();
     private static ClientRepository INSTANCE;
 
     private ClientRepository() {
@@ -13,24 +13,12 @@ public class ClientRepository {
 
     public void register(ClientHandler clientHandler) {
         handlers.add(clientHandler);
-
     }
 
     public void unregister(ClientHandler clientHandler) {
         handlers.remove(clientHandler);
-
     }
 
-    public ClientHandler get(String nick) {
-        ClientHandler result = null;
-        for (ClientHandler clientHandler : handlers) {
-            if (nick.equals(clientHandler.getNick())) {
-                result = clientHandler;
-            }
-
-        }
-        return result;
-    }
 
     public int size() {
         return handlers.size();
