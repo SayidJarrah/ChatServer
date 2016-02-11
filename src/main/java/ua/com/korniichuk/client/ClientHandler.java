@@ -25,27 +25,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         MessagePublisher messagePublisher = new MessagePublisher();
-        UsersCache usersCache = new UsersCache();
+        authorization();
         try {
-            String userAddress = (String) in.readObject();
-            System.out.println(userAddress);  //read ip-address
-
-            if (usersCache.getMap().containsKey(userAddress)) {
-                nick = usersCache.getMap().get(userAddress);
-                System.out.println(nick);
-                ClientRepository.getInstance().register(this);
-            } else {
-               /* out.writeObject(CommonMessages.WELCOME);
-                out.flush();*/
-                Object obj = in.readObject();
-                if (obj instanceof String) {
-                    nick = (String) obj;
-                }
-                ClientRepository.getInstance().register(this);
-                usersCache.appendUsersName(userAddress,nick);
-                LOG.info("User log in");
-                usersCache.appendUsersName(userAddress, nick);
-            }
             messagePublisher.publish(nick + CommonMessages.ONLINE);
             messagePublisher.publishServiceMessage();
 
@@ -63,6 +44,34 @@ public class ClientHandler implements Runnable {
                     messagePublisher.publishServiceMessage();
                     break;
                 }
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            LOG.error("Something wrong :" + e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void authorization() {
+        try {
+
+            UsersCache usersCache = new UsersCache();
+            String userAddress = (String) in.readObject();
+
+            if (usersCache.getMap().containsKey(userAddress)) {
+                nick = usersCache.getMap().get(userAddress);
+                ClientRepository.getInstance().register(this);
+                out.writeObject(nick+", " + CommonMessages.WELCOME);
+            } else {
+                out.writeObject(CommonMessages.WELCOME);
+                out.flush();
+                Object obj = in.readObject();
+                if (obj instanceof String) {
+                    nick = (String) obj;
+                }
+                ClientRepository.getInstance().register(this);
+                usersCache.appendUsersName(userAddress, nick);
+                LOG.info("User log in");
+                usersCache.appendUsersName(userAddress, nick);
             }
         } catch (IOException | ClassNotFoundException e) {
             LOG.error("Something wrong :" + e);
