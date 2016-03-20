@@ -1,7 +1,7 @@
-package ua.com.korniichuk.util;
+package ua.com.korniichuk.chatserver.util;
 
-import ua.com.korniichuk.dao.FileDao;
-import ua.com.korniichuk.dao.IDao;
+import ua.com.korniichuk.chatserver.dao.FileDao;
+import ua.com.korniichuk.chatserver.dao.IDao;
 
 import java.util.HashMap;
 import java.util.Map;

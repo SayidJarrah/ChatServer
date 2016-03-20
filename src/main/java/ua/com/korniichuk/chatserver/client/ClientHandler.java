@@ -1,9 +1,9 @@
-package ua.com.korniichuk.client;
+package ua.com.korniichuk.chatserver.client;
 
 import org.apache.log4j.Logger;
-import ua.com.korniichuk.util.CommonMessages;
-import ua.com.korniichuk.util.MessagePublisher;
-import ua.com.korniichuk.util.UsersCache;
+import ua.com.korniichuk.chatserver.util.CommonMessages;
+import ua.com.korniichuk.chatserver.util.UsersCache;
+import ua.com.korniichuk.chatserver.util.MessagePublisher;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

@@ -1,7 +1,7 @@
-package ua.com.korniichuk.server;
+package ua.com.korniichuk.chatserver.server;
 
 import org.apache.log4j.Logger;
-import ua.com.korniichuk.client.ClientHandler;
+import ua.com.korniichuk.chatserver.client.ClientHandler;
 
 import java.io.IOException;
 import java.net.ServerSocket;

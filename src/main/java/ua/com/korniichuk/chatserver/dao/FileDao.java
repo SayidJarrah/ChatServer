@@ -1,4 +1,4 @@
-package ua.com.korniichuk.dao;
+package ua.com.korniichuk.chatserver.dao;
 
 import java.io.*;
 import java.util.HashMap;

@@ -1,7 +1,7 @@
-package ua.com.korniichuk.util;
+package ua.com.korniichuk.chatserver.util;
 
 
-import ua.com.korniichuk.client.ClientRepository;
+import ua.com.korniichuk.chatserver.client.ClientRepository;
 
 public class CommonMessages {
     public static final String WELCOME = "Welcome in myChat 1.0" + System.getProperty("line.separator") +

@@ -1,8 +1,8 @@
-package ua.com.korniichuk.util;
+package ua.com.korniichuk.chatserver.util;
 
-import ua.com.korniichuk.client.ClientHandler;
-import ua.com.korniichuk.client.ClientRepository;
-import ua.com.korniichuk.client.Message;
+import ua.com.korniichuk.chatserver.client.ClientHandler;
+import ua.com.korniichuk.chatserver.client.ClientRepository;
+import ua.com.korniichuk.chatserver.client.Message;
 
 import java.io.IOException;
 import java.util.ArrayList;

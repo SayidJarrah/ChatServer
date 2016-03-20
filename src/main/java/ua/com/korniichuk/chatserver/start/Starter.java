@@ -1,6 +1,6 @@
-package ua.com.korniichuk.start;
+package ua.com.korniichuk.chatserver.start;
 
-import ua.com.korniichuk.server.ChatServer;
+import ua.com.korniichuk.chatserver.server.ChatServer;
 
 
 public class Starter {
